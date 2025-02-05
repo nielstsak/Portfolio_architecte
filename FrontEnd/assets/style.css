@@ -1,0 +1,624 @@
+/*******************************************************
+	1) RESET CSS
+********************************************************/
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+body {
+	line-height: 1;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before,
+blockquote:after,
+q:before,
+q:after {
+	content: '';
+	content: none;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+/*******************************************************
+	2) STYLES GLOBAUX
+********************************************************/
+body {
+  max-width: 1140px;
+  margin: 0 auto;
+  margin-top: 50px; 
+  font-family: 'Work Sans', sans-serif;
+  font-size: 14px;
+  color: #000;
+}
+
+/*******************************************************
+   BANNIÈRE D’ÉDITION (admin-banner)
+********************************************************/
+#admin-banner {
+  width: 100%;
+  height: 3%;
+  background-color: #000; /* Barre noire en haut */
+  color: #fff;
+  font-family: 'Work Sans', sans-serif;
+
+  align-items: center;
+  padding: 10px 20px; /* Plus de padding vertical/horizontal */
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+}
+#admin-banner p {
+  margin: 0;
+  text-align: center;
+  justify-content: center;
+}
+#admin-banner p i {
+  margin-right: 5px;
+}
+#publish-changes-btn {
+  background-color: #1D6154;
+  color: white;
+  border: none;
+  border-radius: 30px;
+  padding: 8px 16px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+/*******************************************************
+   HEADER + NAV
+********************************************************/
+header {
+  display: flex;
+  justify-content: space-between;
+  margin: 5% 0;
+}
+h1 {
+  display: flex;
+  flex-direction: column;
+  font-family: 'Syne', sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  color: #B1663C;
+}
+h1 > span {
+  font-family: 'Work Sans', sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+}
+nav ul {
+  display: flex;
+  align-items: center;
+}
+nav li {
+  padding: 0 10px;
+  font-size: 1.2em;
+  color: inherit;
+}
+nav ul li a {
+  text-decoration: none;
+  color: inherit;
+}
+nav ul li a:hover,
+nav li:hover {
+  color: #B1663C;
+}
+
+/*******************************************************
+   SECTION GLOBALES
+********************************************************/
+section {
+  margin: 50px 0;
+}
+.hidden {
+  display: none !important;
+}
+
+/*******************************************************
+   INTRODUCTION
+********************************************************/
+#introduction {
+  display: flex;
+  align-items: center;
+  margin-bottom: 50px;
+}
+#introduction figure {
+  flex: 1;
+}
+#introduction img {
+  display: block;
+  margin: auto;
+  width: 80%;
+}
+#introduction article {
+  flex: 1;
+  padding: 0 20px;
+}
+#introduction h2 {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 30px;
+  color: #1D6154;
+  margin-bottom: 1em;
+}
+#introduction p {
+  margin-bottom: 0.5em;
+}
+
+/*******************************************************
+   PORTFOLIO : "MES PROJETS"
+********************************************************/
+#portfolio {
+  margin-bottom: 50px;
+}
+.portfolio-header {
+  display: flex;
+  align-items: center;
+  justify-content: center; 
+  position: relative;     
+  gap: 8px;
+}
+
+.portfolio-header h2 {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 30px;
+  color: #1D6154;
+  text-align: center;
+  margin-bottom: 10%;
+  margin-top: 10%; 
+}
+
+#edit-button {
+	background: none;
+	color: #333;
+	border: none;
+	font-size: 14px;
+	font-family: 'Syne', sans-serif;
+	font-weight: 700;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	gap: 4px; 
+	padding: 4px;
+  }
+  
+#edit-button .edit-icon {
+	width: 16px; 
+	height: 16px;
+  }
+
+/*******************************************************
+   FILTRES
+********************************************************/
+.filters {
+	display: flex;
+	justify-content: center;
+	gap: 20px;
+	margin-top: 20px;
+	margin-bottom: 30px;
+  }
+  
+  .filters button {
+	background-color: #fff;
+	border: 1px solid #1D6154;
+	color: #1D6154;
+	padding: 10px 20px;
+	border-radius: 30px;
+	cursor: pointer;
+	font-family: 'Work Sans', sans-serif;
+	font-size: 1rem;
+	font-weight: 600;
+	transition: background-color 0.2s, color 0.2s;
+  }
+  
+  .filters button:hover {
+	background-color: #1D6154;
+	color: #fff;
+  }
+  
+  .filters button:focus,
+  .filters button:active {
+	background-color: #1D6154;
+	color: #fff;
+	outline: none; 
+  }
+  
+
+/*******************************************************
+   GALERIE PRINCIPALE
+********************************************************/
+.gallery {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-column-gap: 20px;
+  grid-row-gap: 20px;
+}
+.gallery img {
+  width: 100%;
+  display: block;
+}
+
+/*******************************************************
+   CONTACT
+********************************************************/
+#contact {
+  width: 50%;
+  margin: auto;
+  margin-bottom: 60px;
+}
+#contact > * {
+  text-align: center;
+}
+#contact h2 {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 30px;
+  color: #1D6154;
+  margin-bottom: 20px;
+}
+#contact form {
+  text-align: left;
+  margin-top: 30px;
+  display: flex;
+  flex-direction: column;
+}
+#contact label {
+  margin: 2em 0 1em 0;
+}
+#contact input,
+#contact textarea {
+  font-size: 1.2em;
+  border: none;
+  box-shadow: 0px 4px 14px rgba(0,0,0,0.09);
+}
+#contact input {
+  height: 50px;
+  padding: 0 10px;
+}
+#contact textarea {
+  padding: 10px;
+}
+input[type="submit"] {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  color: white;
+  background-color: #1D6154;
+  margin: 2em auto;
+  width: 180px;
+  text-align: center;
+  border-radius: 60px;
+  cursor: pointer;
+}
+
+/*******************************************************
+   FOOTER
+********************************************************/
+footer nav ul {
+  display: flex;
+  justify-content: flex-end;
+  margin: 2em;
+}
+
+/*******************************************************
+   PAGE DE CONNEXION (LOGIN)
+********************************************************/
+#login-page {
+  margin: 100px auto;
+  max-width: 400px;
+  text-align: center;
+}
+#login-page h2 {
+  margin-bottom: 30px;
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 30px;
+  color: #1D6154;
+}
+#login-form {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin: 0 auto;
+  width: 100%;
+}
+#login-form label {
+  margin: 10px 0 5px;
+  font-weight: bold;
+}
+#login-form input {
+  width: 100%;
+  height: 50px;
+  font-size: 1rem;
+  border: none;
+  box-shadow: 0px 4px 14px rgba(0,0,0,0.09);
+  padding: 0 10px;
+  margin-bottom: 15px;
+}
+#login-button {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  color: white;
+  background-color: #1D6154;
+  margin: 20px auto;
+  width: 180px;
+  text-align: center;
+  border-radius: 60px;
+  border: none;
+  padding: 15px 0;
+  cursor: pointer;
+  font-size: 1rem;
+}
+#error-message {
+  color: red;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+/*******************************************************
+   MODALE
+********************************************************/
+.modal {
+  position: fixed;
+  z-index: 2000;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background-color: rgba(0,0,0,0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.modal-content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 40vw; height: auto;
+  max-width: 90%;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 5px;
+}
+
+.modal-content h2 {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 30px;
+  color: #1D6154;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.editor-info {
+  font-size: 0.9rem;
+  color: #666;
+  text-align: center;
+  margin: 10px 0 20px 0;
+}
+
+.modal-separator {
+  width: 80%;
+  height: 1px;
+  background-color: #aaa;
+  margin: 10px auto 20px auto;
+}
+
+.close-modal {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  font-size: 2rem;
+  cursor: pointer;
+}
+
+.modal-gallery {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-bottom: 10%;
+  margin-top: 10%;
+  align-items: center;
+}
+
+.modal-figure {
+  position: relative;
+  width: 110px; 
+  height: 150px;
+  overflow: hidden;
+  cursor: pointer; 
+}
+.modal-figure img {
+  width: 100%;
+}
+
+.trash-icon {
+  position: absolute;
+  top: 5px;
+  left: 45px;
+  height: 20px;
+  cursor: pointer;
+}
+
+#add-photo-btn {
+  display: block;
+  background-color: #1D6154;
+  color: #fff;
+  border: none;
+  border-radius: 30px;
+  padding: 10px 20px;
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  cursor: pointer;
+  margin: 0 auto; /* centré */
+}
+
+/*******************************************************
+   MODALE 2 (AJOUT DE PHOTO)
+********************************************************/
+
+.add-photo-modal-content {
+	position: relative;
+  width: 40vw; height: auto;
+	max-height: 90%;
+	max-width: 90%;
+	background-color: #fff;
+	padding: 20px;
+	border-radius: 5px;
+	display: flex;
+	flex-direction: column; 
+	align-items: center;    
+	justify-content: flex-start; 
+	text-align: center; 
+  }
+  
+  .back-arrow {
+	position: absolute;
+	top: 15px;
+	left: 15px;
+	background: none;
+	border: none;
+	cursor: pointer;
+  }
+  .back-arrow img {
+	width: 20px;
+	height: 20px;
+  }
+  
+  #upload-area {
+	width: 100%;
+	max-width: 600px;
+	height: 200px;
+	background-color: #E8F1F6; 
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	margin-bottom: 15px;
+	border-radius: 5px;
+	position: relative;
+  margin-top: 8%;
+  margin-bottom: 8%;
+  }
+  
+  #upload-label {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+  cursor: pointer;
+	pointer-events: auto; 
+  }
+  
+  .icon-upload {
+	width: 50px;
+	margin-bottom: 10px;
+  }
+  .upload-label p {
+	font-weight: bold;
+	color: #1D6154;
+	margin: 0;
+	font-size: 1rem;
+  }
+  .upload-label span {
+	font-size: 12px;
+	color: #888;
+  }
+  
+  #preview-image {
+	max-width: 90%;
+	max-height: 90%;
+	object-fit: cover;
+	border-radius: 5px;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+  }
+  
+  .fields {
+	width: 100%;
+	max-width: 600px;
+	text-align: left; 
+  }
+  .fields label {
+	display: block;
+	margin-bottom: 5px;
+	font-weight: bold;
+  }
+  .photo-title{
+    max-width: 600px;
+  }
+  .fields input,
+  .fields select {
+	width: 100%;
+	height: 45px;
+  max-width: 600px;
+	margin-bottom: 15px;
+	font-size: 1rem;
+	border: none; 
+	border-radius: 5px;
+	padding: 0 10px;
+	box-shadow: 0 1px 4px rgba(0,0,0,0.15); 
+	background-color: #fff;
+  }
+  
+  .info-message {
+	font-size: 12px;
+	color: #888;
+	margin-top: -10px;
+	margin-bottom: 20px;
+	text-align: left;
+  }
+  
+  #validate-photo {
+	margin-top: auto; 
+	background-color: #1D6154;
+	color: #fff;
+	border: none;
+	border-radius: 30px;
+	padding: 10px 20px;
+	font-family: 'Syne', sans-serif;
+	font-weight: 700;
+	cursor: pointer;
+  }
+  #validate-photo:disabled {
+	background-color: #ccc;
+	cursor: not-allowed;
+  }
+  
+  
+/*******************************************************
+   CLASSE UTILE
+********************************************************/
+.hidden {
+  display: none !important;
+}
