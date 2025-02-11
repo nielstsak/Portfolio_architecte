@@ -2,7 +2,7 @@
    CONFIG API
 ****************************************************/
 const WORKS_URL = "http://localhost:5678/api/works";
-let allWorks = []; 
+let allWorks = []; // contiendra la liste de tous les projets
 
 /****************************************************
    FETCH : RÉCUPÉRATION / SUPPRESSION
@@ -13,7 +13,7 @@ async function fetchWorks() {
     if (!response.ok) {
       throw new Error("Erreur lors de la récupération des travaux");
     }
-    return await response.json(); 
+    return await response.json(); // renvoie un tableau d'objets
   } catch (error) {
     console.error("fetchWorks ->", error);
     return [];
@@ -155,9 +155,11 @@ function handleLoginLogout() {
       window.location.reload();
     });
   } else {
+    // Non connecté
     loginLogoutLink.textContent = "login";
     loginLogoutLink.href = "./login.html";
 
+    // Cacher la bannière + bouton "modifier"
     adminBanner.classList.add("hidden");
     editButton.classList.add("hidden");
 
@@ -167,7 +169,7 @@ function handleLoginLogout() {
 }
 
 /****************************************************
-   MODALE : OUVERTURE / FERMETURE (1re modale)
+   MODALE 1 : GESTION DE GALERIE
 ****************************************************/
 function setupModal() {
   const editButton = document.getElementById("edit-button");
@@ -175,13 +177,13 @@ function setupModal() {
   const closeModalBtn = document.getElementById("close-modal");
   const addPhotoBtn = document.getElementById("add-photo-btn");
 
-  // Ouverture de la première modale "Galerie photo"
+  // Ouvrir la 1re modale "Galerie photo"
   editButton.addEventListener("click", () => {
     buildModalGallery(allWorks);
     modal.classList.remove("hidden");
   });
 
-  // Fermeture via la croix
+  // Fermer via la croix
   closeModalBtn.addEventListener("click", () => {
     modal.classList.add("hidden");
   });
@@ -193,18 +195,13 @@ function setupModal() {
     }
   });
 
-  // Passage à la 2e modale "Ajout de photo"
+  // Bouton "Ajouter une photo" => ouvre la 2e modale
   addPhotoBtn.addEventListener("click", () => {
-    // Fermer la 1re modale
     modal.classList.add("hidden");
-    // Ouvrir la 2e modale
     addPhotoModal.classList.remove("hidden");
   });
 }
 
-/****************************************************
-   MODALE : BUILD MINI-GALERIE
-****************************************************/
 function buildModalGallery(works) {
   const modalGallery = document.querySelector(".modal-gallery");
   modalGallery.innerHTML = "";
@@ -213,14 +210,19 @@ function buildModalGallery(works) {
     const figure = document.createElement("figure");
     figure.classList.add("modal-figure");
 
+    // Image => clic => ouvre la 3e modale "Modifier"
     const img = document.createElement("img");
     img.src = work.imageUrl;
     img.alt = work.title;
-
+    
+    // Au clic, on ouvre la 3e modale
     img.addEventListener("click", () => {
-      alert(`Ouvrir l'écran de modification pour : ${work.title}`);
+      // Stocker l'ID du work dans une variable
+      window.currentEditWorkId = work.id;
+      openEditModal(work);
     });
 
+    // Icône poubelle => suppression
     const trashIcon = document.createElement("img");
     trashIcon.src = "./assets/icons/poubelle_icone.svg";
     trashIcon.classList.add("trash-icon");
@@ -245,7 +247,8 @@ function buildModalGallery(works) {
 
 function removeWorkFromMainGallery(id) {
   allWorks = allWorks.filter((w) => w.id !== id);
-  applyFilter(); 
+  applyFilter();
+}
 
 /****************************************************
    INIT
@@ -271,7 +274,7 @@ async function init() {
 init();
 
 /****************************************************
-   MODALE D'AJOUT DE PHOTO (2e modale)
+   MODALE 2 : AJOUT DE PHOTO
 ****************************************************/
 const addPhotoModal = document.getElementById("add-photo-modal");
 const backToGalleryBtn = document.getElementById("back-to-gallery");
@@ -283,20 +286,21 @@ const photoTitle = document.getElementById("photo-title");
 const photoCategory = document.getElementById("photo-category");
 const validatePhotoButton = document.getElementById("validate-photo");
 
-// FERMER LA MODALE D'AJOUT & REVENIR À LA GALERIE
+// Retour à la 1re modale
 backToGalleryBtn.addEventListener("click", () => {
   addPhotoModal.classList.add("hidden");
+  // rouvre la modale "Galerie photo"
   const modal = document.getElementById("modal");
   modal.classList.remove("hidden");
 });
 
-// FERMER LA MODALE D'AJOUT VIA LA CROIX
+// Fermer la 2e modale via croix
 closeAddPhotoModal.addEventListener("click", () => {
   addPhotoModal.classList.add("hidden");
   resetAddPhotoForm();
 });
 
-// CLIQUE DEHORS POUR FERMER (optionnel)
+// Fermer si clic en dehors
 window.addEventListener("click", (e) => {
   if (e.target === addPhotoModal) {
     addPhotoModal.classList.add("hidden");
@@ -304,14 +308,10 @@ window.addEventListener("click", (e) => {
   }
 });
 
-// AFFICHER L’IMAGE CHOISIE EN APERÇU
+// Sélection d'image => aperçu
 uploadInput.addEventListener("change", (event) => {
   const file = event.target.files[0];
-  if (
-    file &&
-    (file.type === "image/jpeg" || file.type === "image/png") &&
-    file.size <= 4 * 1024 * 1024
-  ) {
+  if (file && (file.type === "image/jpeg" || file.type === "image/png") && file.size <= 4 * 1024 * 1024) {
     const reader = new FileReader();
     reader.onload = () => {
       previewImage.src = reader.result;
@@ -327,7 +327,7 @@ uploadInput.addEventListener("change", (event) => {
   }
 });
 
-// RÉCUPÉRER LES CATÉGORIES DEPUIS L’API
+// Charger les catégories pour la 2e modale
 async function loadCategories() {
   try {
     const response = await fetch("http://localhost:5678/api/categories");
@@ -336,10 +336,11 @@ async function loadCategories() {
     }
     const categories = await response.json();
     photoCategory.innerHTML = "";
-    categories.forEach((category) => {
+    // Aucune option sélectionnée par défaut
+    categories.forEach((cat) => {
       const option = document.createElement("option");
-      option.value = category.id;
-      option.textContent = category.name;
+      option.value = cat.id;
+      option.textContent = cat.name;
       photoCategory.appendChild(option);
     });
   } catch (error) {
@@ -347,23 +348,18 @@ async function loadCategories() {
   }
 }
 
-// ACTIVER/DÉSACTIVER LE BOUTON "VALIDER"
+// Activer/désactiver bouton "Valider" ajout
 function updateValidateButton() {
-  if (
-    photoTitle.value.trim() !== "" &&
-    previewImage.src !== "" &&
-    photoCategory.value !== ""
-  ) {
+  if (photoTitle.value.trim() !== "" && previewImage.src !== "" && photoCategory.value !== "") {
     validatePhotoButton.removeAttribute("disabled");
   } else {
     validatePhotoButton.setAttribute("disabled", true);
   }
 }
-
 photoTitle.addEventListener("input", updateValidateButton);
 photoCategory.addEventListener("change", updateValidateButton);
 
-// ENVOYER LES DONNÉES À L'API
+// Envoyer les données (2e modale => création de projet)
 validatePhotoButton.addEventListener("click", async () => {
   const file = uploadInput.files[0];
   if (!file) return;
@@ -374,7 +370,7 @@ validatePhotoButton.addEventListener("click", async () => {
   formData.append("category", photoCategory.value);
 
   try {
-    const response = await fetch("http://localhost:5678/api/works", {
+    const response = await fetch(WORKS_URL, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -394,20 +390,121 @@ validatePhotoButton.addEventListener("click", async () => {
   }
 });
 
-// RÉINITIALISER LE FORMULAIRE APRÈS VALIDATION
 function resetAddPhotoForm() {
   uploadInput.value = "";
   previewImage.src = "";
   previewImage.classList.add("hidden");
   uploadLabel.style.display = "flex";
-
   photoTitle.value = "";
   photoCategory.value = "";
   validatePhotoButton.setAttribute("disabled", true);
 }
 
-// INITIALISATION AU CHARGEMENT
+// Charger les catégories au chargement pour la 2e modale
 document.addEventListener("DOMContentLoaded", () => {
   loadCategories();
-})
+});
+
+/****************************************************
+   MODALE 3 : MODIFIER UN PROJET
+****************************************************/
+const editPhotoModal = document.getElementById("edit-photo-modal"); // Dans votre HTML, id="edit-photo-modal"
+const closeEditModalBtn = document.getElementById("close-edit-modal"); // La croix
+const editTitleInput = document.getElementById("edit-title"); // Le champ titre
+const editCategorySelect = document.getElementById("edit-category"); // La liste catégories
+const editPreviewImage = document.getElementById("edit-preview-image");
+const editValidateBtn = document.getElementById("edit-validate-btn");
+
+// Fonction pour ouvrir la 3e modale, préremplir les champs
+function openEditModal(work) {
+  // Stocker l'ID pour la mise à jour
+  window.currentEditWorkId = work.id;
+  
+  // Préremplir le champ titre
+  editTitleInput.value = work.title;
+  
+  // Catégorie existante
+  editCategorySelect.value = work.category?.id || "";
+  
+  // Image existante
+  editPreviewImage.src = work.imageUrl;
+  editPreviewImage.classList.remove("hidden");
+  
+  // Afficher la modale
+  editPhotoModal.classList.remove("hidden");
+  
+  // Activer/désactiver le bouton
+  updateEditValidateButton();
 }
+
+// Fermer la 3e modale
+closeEditModalBtn.addEventListener("click", () => {
+  editPhotoModal.classList.add("hidden");
+});
+
+// Fermer si clic en dehors
+window.addEventListener("click", (e) => {
+  if (e.target === editPhotoModal) {
+    editPhotoModal.classList.add("hidden");
+  }
+});
+
+// Activer/désactiver le bouton “Enregistrer”
+function updateEditValidateButton() {
+  if (editTitleInput.value.trim() !== "" && editCategorySelect.value !== "") {
+    editValidateBtn.removeAttribute("disabled");
+  } else {
+    editValidateBtn.setAttribute("disabled", true);
+  }
+}
+editTitleInput.addEventListener("input", updateEditValidateButton);
+editCategorySelect.addEventListener("change", updateEditValidateButton);
+
+// Enregistrer la modif (3e modale)
+editValidateBtn.addEventListener("click", async () => {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    alert("Vous n’êtes pas connecté.");
+    return;
+  }
+  
+  const currentWorkId = window.currentEditWorkId;
+  if (!currentWorkId) {
+    alert("Aucun projet à modifier");
+    return;
+  }
+  
+  const newTitle = editTitleInput.value.trim();
+  const newCatId = editCategorySelect.value;
+  
+  // Appel PUT/PATCH
+  try {
+    const response = await fetch(`${WORKS_URL}/${currentWorkId}`, {
+      method: "PUT", // ou PATCH selon votre API
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        title: newTitle,
+        category: newCatId
+      })
+    });
+    
+    if (!response.ok) throw new Error("Erreur lors de la mise à jour");
+    
+    alert("Modifications enregistrées !");
+    editPhotoModal.classList.add("hidden");
+    
+    // Recharger la galerie
+    location.reload();
+  } catch (error) {
+    console.error(error);
+    alert("Impossible de modifier ce projet.");
+  }
+});
+
+// Charger les catégories pour la 3e modale ? 
+// Soit la même fonction “loadCategories()” 
+// Ou un loadEditCategories() identique qui remplit #edit-category
+// (Selon la structure de votre API).
