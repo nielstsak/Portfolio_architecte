@@ -163,7 +163,24 @@
 	  <button id="validate-photo" disabled>Valider</button>
 	</div>
   </div>
-  
+
+  <!-- MODALE 3 : MODIFIER UN PROJET -->
+  <div id="edit-photo-modal" class="modal hidden">
+    <div class="modal-content">
+      <span id="close-edit-modal" class="close-modal">&times;</span>
+      <h2>Modifier un projet</h2>
+      <label for="edit-title">Titre</label>
+      <input type="text" id="edit-title" placeholder="Titre du projet">
+      
+      <label for="edit-category">Catégorie</label>
+      <select id="edit-category"></select>
+      
+      <img id="edit-preview-image" class="hidden" alt="Aperçu du projet">
+      
+      <button id="edit-validate-btn" disabled>Valider</button>
+    </div>
+  </div>
+
   
 
   <script src="./script.js"></script>
