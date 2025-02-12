@@ -2,7 +2,6 @@
 
 // On pointe vers l'API de votre back-end
 const LOGIN_URL = "http://localhost:5678/api/users/login"; 
-//    (à adapter selon votre route d'authentification)
 
 // Récupération des éléments du DOM
 const loginForm = document.getElementById("login-form");
@@ -17,8 +16,8 @@ loginForm.addEventListener("submit", async (event) => {
   const passwordInput = document.getElementById("password");
 
   const userData = {
-    email: emailInput.value.trim(),
-    password: passwordInput.value.trim(),
+    email: emailInput.value,
+    password: passwordInput.value,
   };
 
   // Appel fetch en méthode POST
@@ -38,10 +37,8 @@ loginForm.addEventListener("submit", async (event) => {
 
     // Si ok, on récupère le token
     const data = await response.json(); 
-    // data doit contenir un token d’authentification
     
     if (data.token) {
-      // On stocke le token dans le localStorage (ou sessionStorage)
       window.localStorage.setItem("token", data.token);
 
       // Rediriger vers la page d’accueil (index.html par ex)

@@ -65,12 +65,12 @@ body {
 #admin-banner {
   width: 100%;
   height: 3%;
-  background-color: #000; /* Barre noire en haut */
+  background-color: #000; 
   color: #fff;
   font-family: 'Work Sans', sans-serif;
 
   align-items: center;
-  padding: 10px 20px; /* Plus de padding vertical/horizontal */
+  padding: 10px 20px; 
   position: fixed;
   top: 0;
   left: 0;
@@ -246,12 +246,12 @@ section {
 	color: #fff;
   }
   
-  .filters button:focus,
-  .filters button:active {
-	background-color: #1D6154;
-	color: #fff;
-	outline: none; 
+  .filters button.active-filter {
+    background-color: #1D6154;
+    color: #fff;
+    outline: none;
   }
+  
   
 
 /*******************************************************
