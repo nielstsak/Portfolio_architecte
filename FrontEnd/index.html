@@ -163,33 +163,31 @@
 
 <!-- MODALE 3 : MODIFIER UN PROJET -->
   <div id="edit-photo-modal" class="modal hidden">
-    <div class="modal-content add-photo-modal-content"> <!-- Utiliser la même classe pour le style -->
-      <button id="back-to-gallery-edit" class="back-arrow"> <!-- ID unique -->
+    <div class="modal-content add-photo-modal-content"> 
+      <button id="back-to-gallery-edit" class="back-arrow"> 
         <img src="./assets/icons/arrow-left-svgrepo-com.svg" alt="Retour">
       </button>
-      <span id="close-edit-photo-modal" class="close-modal">×</span> <!-- ID unique -->
-      <h2>Modification photo</h2> <!-- Titre plus approprié -->
+      <span id="close-edit-photo-modal" class="close-modal">×</span> 
+      <h2>Modification </h2>
 
-      <div class="upload-box" id="upload-area-edit"> <!-- ID unique -->
-        <label for="upload-input-edit" class="upload-label" id="upload-label-edit"> <!-- IDs uniques -->
+      <div class="upload-box" id="upload-area-edit"> 
+        <label for="upload-input-edit" class="upload-label" id="upload-label-edit"> 
           <img src="./assets/icons/image-plus-svgrepo-com.svg" alt="Icône upload" class="icon-upload">
-          <p>Modifier l'image</p> <!-- Texte adapté -->
+          <p>Modifier l'image</p>
           <span>jpg, png : 4mo max</span>
         </label>
-        <input type="file" id="upload-input-edit" accept="image/png, image/jpeg" hidden> <!-- ID unique -->
-        <img id="edit-preview-image" class="hidden" alt="Aperçu de l’image"> <!-- ID unique, classe hidden enlevée, style ajouté -->
+        <input type="file" id="upload-input-edit" accept="image/png, image/jpeg" hidden> 
+        <img id="edit-preview-image" class="hidden" alt="Aperçu de l’image"> 
       </div>
 
       <div class="fields">
         <label for="edit-photo-title">Titre</label>
-        <input type="text" id="edit-photo-title" placeholder="Nom du projet"> <!-- ID unique -->
-
+        <input type="text" id="edit-photo-title" placeholder="Nom du projet"> 
         <label for="edit-photo-category">Catégorie</label>
-        <select id="edit-photo-category"></select> <!-- ID unique -->
-      </div>
+        <select id="edit-photo-category"></select> 
 
       <div class="modal-separator"></div>
-      <button id="validate-photo-edit" disabled>Valider les modifications</button> <!-- ID unique et texte adapté -->
+      <button id="validate-photo-edit" disabled>Valider les modifications</button> 
     </div>
   </div>
   

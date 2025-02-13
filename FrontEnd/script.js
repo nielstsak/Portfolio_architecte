@@ -256,11 +256,49 @@ async function init() {
 
   // 5. Prépare la modale "Galerie photo"
   setupModal();
+
+  // 6. Charge les catégories
+  await loadCategories(); // **Ajouté ici**
 }
 
 // Lancement
 init();
 
+async function loadCategories() {
+    try {
+        const response = await fetch("http://localhost:5678/api/categories");
+        if (!response.ok) {
+            throw new Error("Erreur lors du chargement des catégories");
+        }
+        const categories = await response.json();
+        
+        const photoCategory = document.getElementById("photo-category");
+        const editCategorySelect = document.getElementById("edit-photo-category");
+
+        if (!photoCategory || !editCategorySelect) {
+            console.error("Erreur : Un ou plusieurs éléments <select> n'ont pas été trouvés.");
+            return; 
+        }
+
+        photoCategory.innerHTML = "";
+        editCategorySelect.innerHTML = ""; 
+
+        categories.forEach((cat) => {
+            const option1 = document.createElement("option");
+            option1.value = cat.id;
+            option1.textContent = cat.name;
+            photoCategory.appendChild(option1);
+
+            const option2 = document.createElement("option");
+            option2.value = cat.id;
+            option2.textContent = cat.name;
+            editCategorySelect.appendChild(option2);
+        });
+
+    } catch (error) {
+        console.error("Erreur lors du chargement des catégories:", error);
+    }
+}
 /****************************************************
  * MODALE 2 : AJOUT DE PHOTO
  ****************************************************/
@@ -275,128 +313,153 @@ const photoCategory = document.getElementById("photo-category");
 const validatePhotoButton = document.getElementById("validate-photo");
 const modal = document.getElementById("modal");
 
-// Retour à la 1re modale
 backToGalleryBtn.addEventListener("click", () => {
-  addPhotoModal.classList.add("hidden");
-  modal.classList.remove("hidden");
+    addPhotoModal.classList.add("hidden");
+    modal.classList.remove("hidden");
 });
 
-// Fermer la 2e modale via croix
 closeAddPhotoModal.addEventListener("click", () => {
-  addPhotoModal.classList.add("hidden");
-  resetAddPhotoForm();
-  modal.classList.remove("hidden");
-});
-
-window.addEventListener("click", (e) => {
-  if (e.target === addPhotoModal) {
     addPhotoModal.classList.add("hidden");
     resetAddPhotoForm();
     modal.classList.remove("hidden");
-  }
 });
 
-// Sélection d'image => aperçu
+window.addEventListener("click", (e) => {
+    if (e.target === addPhotoModal) {
+        addPhotoModal.classList.add("hidden");
+        resetAddPhotoForm();
+        modal.classList.remove("hidden");
+    }
+});
+
 uploadInput.addEventListener("change", (event) => {
-  const file = event.target.files[0];
-  if (file && (file.type === "image/jpeg" || file.type === "image/png") && file.size <= 4 * 1024 * 1024) {
-    const reader = new FileReader();
-    reader.onload = () => {
-      previewImage.src = reader.result;
-      previewImage.classList.remove("hidden");
-      uploadLabel.style.display = "none";
-    };
-    reader.readAsDataURL(file);
-  } else {
-    alert("Format ou taille invalide ! (jpg/png, max 4 Mo)");
-    uploadInput.value = "";
-    previewImage.classList.add("hidden");
-    uploadLabel.style.display = "flex";
-  }
+    const file = event.target.files[0];
+    if (file && (file.type === "image/jpeg" || file.type === "image/png") && file.size <= 4 * 1024 * 1024) {
+        const reader = new FileReader();
+        reader.onload = () => {
+            previewImage.src = reader.result;
+            previewImage.classList.remove("hidden");
+            uploadLabel.style.display = "none";
+        };
+        reader.readAsDataURL(file);
+    } else {
+        alert("Format ou taille invalide ! (jpg/png, max 4 Mo)");
+        uploadInput.value = "";
+        previewImage.classList.add("hidden");
+        uploadLabel.style.display = "flex";
+    }
 });
 
 async function loadCategories() {
-  try {
-    const response = await fetch("http://localhost:5678/api/categories");
-    if (!response.ok) {
-      throw new Error("Erreur lors du chargement des catégories");
+    try {
+        const response = await fetch("http://localhost:5678/api/categories");
+        if (!response.ok) {
+            throw new Error("Erreur lors du chargement des catégories");
+        }
+        const categories = await response.json();
+        photoCategory.innerHTML = "";
+
+        categories.forEach((cat) => {
+            const option = document.createElement("option");
+            option.value = cat.id;
+            option.textContent = cat.name;
+            photoCategory.appendChild(option);
+        });
+        editCategorySelect.innerHTML = photoCategory.innerHTML;
+
+    } catch (error) {
+        console.error("Erreur lors du chargement des catégories:", error);
     }
-    const categories = await response.json();
-    photoCategory.innerHTML = "";
-
-    categories.forEach((cat) => {
-      const option = document.createElement("option");
-      option.value = cat.id;
-      option.textContent = cat.name;
-      photoCategory.appendChild(option);
-    });
-	editCategorySelect.innerHTML = photoCategory.innerHTML;
-
-  } catch (error) {
-    console.error("Erreur lors du chargement des catégories:", error);
-  }
 }
 
 function updateValidateButton() {
-  if (photoTitle.value.trim() !== "" && previewImage.src !== "" && photoCategory.value !== "") {
-    validatePhotoButton.removeAttribute("disabled");
-  } else {
-    validatePhotoButton.setAttribute("disabled", true);
-  }
+    if (photoTitle.value.trim() !== "" && previewImage.src !== "" && photoCategory.value !== "") {
+        validatePhotoButton.removeAttribute("disabled");
+    } else {
+        validatePhotoButton.setAttribute("disabled", true);
+    }
 }
+
 photoTitle.addEventListener("input", updateValidateButton);
 photoCategory.addEventListener("change", updateValidateButton);
 
 validatePhotoButton.addEventListener("click", async () => {
-  const file = uploadInput.files[0];
-  if (!file) return;
+    const file = uploadInput.files[0];
+    if (!file) return;
 
-  const formData = new FormData();
-  formData.append("image", file);
-  formData.append("title", photoTitle.value.trim());
-  formData.append("category", photoCategory.value);
+    const formData = new FormData();
+    formData.append("image", file);
+    formData.append("title", photoTitle.value.trim());
+    formData.append("category", photoCategory.value);
 
-  try {
-    const response = await fetch(WORKS_URL, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-      body: formData,
-    });
+    try {
+        const response = await fetch(WORKS_URL, {
+            method: "POST",
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+            body: formData,
+        });
 
-    if (!response.ok) throw new Error("Erreur lors de l’ajout");
+        if (!response.ok) throw new Error("Erreur lors de l’ajout");
 
-    alert("Photo ajoutée !");
-    addPhotoModal.classList.add("hidden");
-    modal.classList.remove("hidden"); //Afficher la fenetre modale n°1
-    resetAddPhotoForm();
-    location.reload();
-  } catch (error) {
-    console.error("Erreur :", error);
-    alert("Une erreur est survenue.");
-  }
+        const newWork = await response.json(); 
+
+        alert("Photo ajoutée !");
+        addPhotoModal.classList.add("hidden");
+        modal.classList.remove("hidden");
+
+        allWorks.push(newWork); 
+        displayWorks(allWorks); 
+        buildModalGallery(allWorks);
+
+        resetAddPhotoForm();
+
+    } catch (error) {
+        console.error("Erreur :", error);
+        alert("Une erreur est survenue.");
+    }
 });
 
 function resetAddPhotoForm() {
-  uploadInput.value = "";
-  previewImage.src = "";
-  previewImage.classList.add("hidden");
-  uploadLabel.style.display = "flex";
-  photoTitle.value = "";
-  photoCategory.value = "";
-  validatePhotoButton.setAttribute("disabled", true);
+    uploadInput.value = "";
+    previewImage.src = "";
+    previewImage.classList.add("hidden");
+    uploadLabel.style.display = "flex";
+    photoTitle.value = "";
+    photoCategory.value = "";
+    validatePhotoButton.setAttribute("disabled", true);
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  loadCategories();
-});
+function openEditModal(work) {
+  console.log("openEditModal, work:", work); 
+  window.currentEditWorkId = work.id;
+  console.log("openEditModal, currentEditWorkId:",  window.currentEditWorkId);
+
+
+  editTitleInput.value = work.title;
+  editCategorySelect.value = work.category?.id || "";
+  if (work.imageUrl) {
+      editPreviewImage.src = work.imageUrl;
+      editPreviewImage.classList.remove("hidden");
+      editUploadLabel.style.display = "none";
+  } else {
+      editPreviewImage.classList.add("hidden");
+      editUploadLabel.style.display = "flex";
+  }
+
+  editPhotoModal.classList.remove("hidden");
+  modal.classList.add("hidden");
+
+  updateEditValidateButton();
+}
+
 
 /****************************************************
  * MODALE 3 : MODIFIER UN PROJET
  ****************************************************/
 const editPhotoModal = document.getElementById("edit-photo-modal");
-const closeEditModalBtn = document.getElementById("close-edit-photo-modal");
+const closeEditModalBtn = document.getElementById("close-edit-modal");
 const backToGalleryEditBtn = document.getElementById("back-to-gallery-edit");
 const editUploadInput = document.getElementById("upload-input-edit");
 const editUploadLabel = document.getElementById("upload-label-edit");
@@ -405,56 +468,43 @@ const editTitleInput = document.getElementById("edit-photo-title");
 const editCategorySelect = document.getElementById("edit-photo-category");
 const editValidateBtn = document.getElementById("validate-photo-edit");
 
-
-// Fonction pour ouvrir la 3e modale, préremplir les champs
 function openEditModal(work) {
-    window.currentEditWorkId = work.id;
+  window.currentEditWorkId = work.id;
 
-    editTitleInput.value = work.title;
-    editCategorySelect.value = work.category?.id || "";
-	if (work.imageUrl) {
-		editPreviewImage.src = work.imageUrl;
-		editPreviewImage.classList.remove("hidden");
-		editUploadLabel.style.display = "none";
-	} else {
-		editPreviewImage.classList.add("hidden");
-		editUploadLabel.style.display = "flex";
-	}
+  editTitleInput.value = work.title;
+  editCategorySelect.value = work.category?.id || "";
+  if (work.imageUrl) {
+    editPreviewImage.src = work.imageUrl;
+    editPreviewImage.classList.remove("hidden");
+    editUploadLabel.style.display = "none";
+  } else {
+    editPreviewImage.classList.add("hidden");
+    editUploadLabel.style.display = "flex";
+  }
 
-    editPhotoModal.classList.remove("hidden");
-	modal.classList.add("hidden");
-
-    updateEditValidateButton();
-}
-
-
-closeEditModalBtn.addEventListener("click", () => {
-    editPhotoModal.classList.add("hidden");
-	modal.classList.remove("hidden");
-    resetEditPhotoForm();
-});
-
+  editPhotoModal.classList.remove("hidden");
+  modal.classList.add("hidden");
+  
 backToGalleryEditBtn.addEventListener("click", () => {
     editPhotoModal.classList.add("hidden");
-	modal.classList.remove("hidden");
+    modal.classList.remove("hidden");
     resetEditPhotoForm();
 });
-
 
 window.addEventListener("click", (e) => {
     if (e.target === editPhotoModal) {
         editPhotoModal.classList.add("hidden");
-		modal.classList.remove("hidden");
+        modal.classList.remove("hidden");
         resetEditPhotoForm();
     }
 });
 
 function updateEditValidateButton() {
-    if (editTitleInput.value.trim() !== "" && editCategorySelect.value !== "") {
-        editValidateBtn.removeAttribute("disabled");
-    } else {
-        editValidateBtn.setAttribute("disabled", true);
-    }
+  if (editTitleInput.value.trim() !== "" && editCategorySelect.value !== "") {
+      editValidateBtn.removeAttribute("disabled");
+  } else {
+      editValidateBtn.setAttribute("disabled", true);
+  }
 }
 
 editTitleInput.addEventListener("input", updateEditValidateButton);
@@ -463,80 +513,106 @@ editCategorySelect.addEventListener("change", updateEditValidateButton);
 editUploadInput.addEventListener("change", (event) => {
     const file = event.target.files[0];
     if (file && (file.type === "image/jpeg" || file.type === "image/png") && file.size <= 4 * 1024 * 1024) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        editPreviewImage.src = reader.result;
-        editPreviewImage.classList.remove("hidden");
-        editUploadLabel.style.display = "none";
-        updateEditValidateButton(); 
-      };
-      reader.readAsDataURL(file);
+        const reader = new FileReader();
+        reader.onload = () => {
+            editPreviewImage.src = reader.result;
+            editPreviewImage.classList.remove("hidden");
+            editUploadLabel.style.display = "none";
+            updateEditValidateButton();
+        };
+        reader.readAsDataURL(file);
     } else {
-      alert("Format ou taille invalide ! (jpg/png, max 4 Mo)");
-      editUploadInput.value = "";
-      editPreviewImage.classList.add("hidden");
-      editUploadLabel.style.display = "flex";
-      updateEditValidateButton(); 
+        alert("Format ou taille invalide ! (jpg/png, max 4 Mo)");
+        editUploadInput.value = "";
+        editPreviewImage.classList.add("hidden");
+        editUploadLabel.style.display = "flex";
+        updateEditValidateButton();
     }
-  });
-
+});
 
 editValidateBtn.addEventListener("click", async () => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-        alert("Vous n’êtes pas connecté.");
-        return;
-    }
+  const token = localStorage.getItem("token");
+  if (!token) {
+      alert("Vous n’êtes pas connecté.");
+      return;
+  }
 
-    const currentWorkId = window.currentEditWorkId;
-    if (!currentWorkId) {
-        alert("Aucun projet à modifier");
-        return;
-    }
+  const currentWorkId = window.currentEditWorkId;
+  if (!currentWorkId) {
+      alert("Aucun projet à modifier");
+      return;
+  }
 
-    const newTitle = editTitleInput.value.trim();
-    const newCatId = editCategorySelect.value;
+  const newTitle = editTitleInput.value.trim();
+  const newCatId = parseInt(editCategorySelect.value, 10);
+  const file = editUploadInput.files[0]; 
+  const existingImageUrl = editPreviewImage.src; 
 
-    let formData = new FormData();
-    formData.append("title", newTitle);
-    formData.append("category", newCatId);
-    if (editUploadInput.files.length > 0) {
-        formData.append("image", editUploadInput.files[0]);
-    } else {
-    }
+  try {
+      if (!newTitle || !newCatId) {
+          alert("Veuillez remplir tous les champs.");
+          return;
+      }
+
+      if (!file) {
+          alert("Veuillez sélectionner une nouvelle image.");
+          return;
+      }
+
+      const deleteResponse = await fetch(`${WORKS_URL}/${currentWorkId}`, {
+          method: "DELETE",
+          headers: {
+              Authorization: `Bearer ${token}`,
+          },
+      });
+
+      if (!deleteResponse.ok) {
+          const errorText = await deleteResponse.text();
+          throw new Error(`Erreur lors de la suppression: ${deleteResponse.status} - ${errorText}`);
+      }
 
 
-    try {
-        const response = await fetch(`${WORKS_URL}/${currentWorkId}`, {
-            method: "PUT",
-            headers: {
-                Authorization: `Bearer ${token}`
-            },
-            body: formData
-        });
+      const formData = new FormData();
+      formData.append("title", newTitle);
+      formData.append("category", newCatId);
+      formData.append("image", file); 
 
-        if (!response.ok) throw new Error("Erreur lors de la mise à jour");
+      const createResponse = await fetch(WORKS_URL, {
+          method: "POST",
+          headers: {
+              Authorization: `Bearer ${token}`,
+          },
+          body: formData,
+      });
 
-        alert("Modifications enregistrées !");
-        editPhotoModal.classList.add("hidden");
-		modal.classList.remove("hidden");
-        location.reload();
-    } catch (error) {
-        console.error(error);
-        alert("Impossible de modifier ce projet.");
-    }
+      if (!createResponse.ok) {
+          const errorText = await createResponse.text();
+          throw new Error(`Erreur lors de la création: ${createResponse.status} - ${errorText}`);
+      }
+
+      const newWork = await createResponse.json();
+
+      alert("Modifications enregistrées !");
+      editPhotoModal.classList.add("hidden");
+
+      allWorks = allWorks.filter(work => work.id !== currentWorkId); 
+      allWorks.push(newWork); 
+      displayWorks(allWorks);
+      buildModalGallery(allWorks);
+
+  } catch (error) {
+      console.error(error);
+      alert("Impossible de modifier ce projet.");
+  }
 });
 
 function resetEditPhotoForm() {
-    editUploadInput.value = "";
-    editPreviewImage.src = "";
-    editPreviewImage.classList.add("hidden");
-    editUploadLabel.style.display = "flex";
-    editTitleInput.value = "";
-    editCategorySelect.value = "";
-    editValidateBtn.setAttribute("disabled", true);
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-    loadCategories(); 
-});
+  editUploadInput.value = "";
+  editPreviewImage.src = "";
+  editPreviewImage.classList.add("hidden");
+  editUploadLabel.style.display = "flex";
+  editTitleInput.value = "";
+  editCategorySelect.value = "";
+  editValidateBtn.setAttribute("disabled", true);
+  }
+};  
