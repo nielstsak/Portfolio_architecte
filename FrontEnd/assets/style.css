@@ -461,12 +461,22 @@ footer nav ul {
   width: 100%;
 }
 
+.trash-icon-container {
+  position: absolute;
+  top: 5px;
+  left: 45px;
+  width: 24px;
+  height: 24px;
+  background-color: black;
+}
+
 .trash-icon {
   position: absolute;
   top: 5px;
   left: 45px;
   height: 20px;
   cursor: pointer;
+  filter: brightness(0) invert(1); 
 }
 
 #add-photo-btn {

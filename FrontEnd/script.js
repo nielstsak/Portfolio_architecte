@@ -209,14 +209,26 @@ function buildModalGallery(works) {
       window.currentEditWorkId = work.id;
       openEditModal(work);
     });
+    
+    // --- Création du conteneur pour l'icône poubelle ---
+    const container = document.createElement("div");
+    container.style.position = "absolute";
+    container.style.top = "5px";
+    container.style.right = "5px";
+    container.style.width = "20px";
+    container.style.height = "20px";
+    container.style.backgroundColor = "black"; 
+    container.style.cursor = "pointer";
 
     const trashIcon = document.createElement("img");
     trashIcon.src = "./assets/icons/poubelle_icone.svg";
-    trashIcon.classList.add("trash-icon");
+    trashIcon.style.width = "100%";
+    trashIcon.style.height = "100%";
+    trashIcon.style.filter = "brightness(0) invert(1)";
+    trashIcon.style.backgroundColor = "transparent"; 
 
-    trashIcon.addEventListener("click", async (e) => {
+    container.addEventListener("click", async (e) => {
       e.stopPropagation();
-      console.log(e);
       try {
         await deleteWork(work.id);
         figure.remove();
@@ -227,8 +239,9 @@ function buildModalGallery(works) {
       }
     });
 
+    container.appendChild(trashIcon);
     figure.appendChild(img);
-    figure.appendChild(trashIcon);
+    figure.appendChild(container);
     modalGallery.appendChild(figure);
   });
 }
