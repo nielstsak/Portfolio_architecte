@@ -483,139 +483,146 @@ footer nav ul {
 }
 
 /*******************************************************
-   MODALE 2 (AJOUT DE PHOTO)
-********************************************************/
+ * MODALE 2 (AJOUT DE PHOTO) ET MODALE 3 (MODIFIER UN PROJET)
+ ****************************************/
 
-.add-photo-modal-content {
-	position: relative;
-  width: 40vw; height: auto;
-	max-height: 90%;
-	max-width: 90%;
-	background-color: #fff;
-	padding: 20px;
-	border-radius: 5px;
-	display: flex;
-	flex-direction: column; 
-	align-items: center;    
-	justify-content: flex-start; 
-	text-align: center; 
-  }
-  
-  .back-arrow {
-	position: absolute;
-	top: 15px;
-	left: 15px;
-	background: none;
-	border: none;
-	cursor: pointer;
-  }
-  .back-arrow img {
-	width: 20px;
-	height: 20px;
-  }
-  
-  #upload-area {
-	width: 100%;
-	max-width: 600px;
-	height: 200px;
-	background-color: #E8F1F6; 
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-	margin-bottom: 15px;
-	border-radius: 5px;
-	position: relative;
+ .add-photo-modal-content {
+  position: relative;
+  width: 40vw;
+  max-width: 600px; /* Largeur maximale pour s'adapter au contenu */
+  max-height: 90vh; /* Hauteur maximale pour éviter de dépasser l'écran */
+  overflow-y: auto; /* Ajoute une barre de défilement si le contenu est trop long */
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  text-align: center;
+}
+
+
+.back-arrow {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.back-arrow img {
+  width: 20px;
+  height: 20px;
+}
+
+#upload-area, #upload-area-edit {
+  width: 100%;
+  max-width: 600px;
+  height: 200px;
+  background-color: #E8F1F6;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 15px;
+  border-radius: 5px;
+  position: relative;
   margin-top: 8%;
   margin-bottom: 8%;
-  }
-  
-  #upload-label {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
+}
+
+
+#upload-label, #upload-label-edit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   cursor: pointer;
-	pointer-events: auto; 
-  }
-  
-  .icon-upload {
-	width: 50px;
-	margin-bottom: 10px;
-  }
-  .upload-label p {
-	font-weight: bold;
-	color: #1D6154;
-	margin: 0;
-	font-size: 1rem;
-  }
-  .upload-label span {
-	font-size: 12px;
-	color: #888;
-  }
-  
-  #preview-image {
-	max-width: 90%;
-	max-height: 90%;
-	object-fit: cover;
-	border-radius: 5px;
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
-  }
-  
-  .fields {
-	width: 100%;
-	max-width: 600px;
-	text-align: left; 
-  }
-  .fields label {
-	display: block;
-	margin-bottom: 5px;
-	font-weight: bold;
-  }
-  .photo-title{
-    max-width: 600px;
-  }
-  .fields input,
-  .fields select {
-	width: 100%;
-	height: 45px;
+  pointer-events: auto;
+}
+
+.icon-upload {
+  width: 50px;
+  margin-bottom: 10px;
+}
+
+.upload-label p {
+  font-weight: bold;
+  color: #1D6154;
+  margin: 0;
+  font-size: 1rem;
+}
+
+.upload-label span {
+  font-size: 12px;
+  color: #888;
+}
+
+
+#preview-image, #edit-preview-image {
+  max-width: 90%;
+  max-height: 90%;
+  object-fit: cover;
+  border-radius: 5px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.fields {
+  width: 100%;
   max-width: 600px;
-	margin-bottom: 15px;
-	font-size: 1rem;
-	border: none; 
-	border-radius: 5px;
-	padding: 0 10px;
-	box-shadow: 0 1px 4px rgba(0,0,0,0.15); 
-	background-color: #fff;
-  }
-  
-  .info-message {
-	font-size: 12px;
-	color: #888;
-	margin-top: -10px;
-	margin-bottom: 20px;
-	text-align: left;
-  }
-  
-  #validate-photo {
-	margin-top: auto; 
-	background-color: #1D6154;
-	color: #fff;
-	border: none;
-	border-radius: 30px;
-	padding: 10px 20px;
-	font-family: 'Syne', sans-serif;
-	font-weight: 700;
-	cursor: pointer;
-  }
-  #validate-photo:disabled {
-	background-color: #ccc;
-	cursor: not-allowed;
-  }
-  
-  
+  text-align: left;
+}
+
+.fields label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.fields input,
+.fields select {
+  width: 100%;
+  height: 45px;
+  max-width: 600px;
+  margin-bottom: 15px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 5px;
+  padding: 0 10px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+  background-color: #fff;
+}
+
+.info-message {
+  font-size: 12px;
+  color: #888;
+  margin-top: -10px;
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+
+#validate-photo, #validate-photo-edit {
+  margin-top: auto;
+  background-color: #1D6154;
+  color: #fff;
+  border: none;
+  border-radius: 30px;
+  padding: 10px 20px;
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+#validate-photo:disabled, #validate-photo-edit:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
 /*******************************************************
    CLASSE UTILE
 ********************************************************/

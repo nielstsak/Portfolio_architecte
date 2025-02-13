@@ -262,8 +262,8 @@ async function init() {
 init();
 
 /****************************************************
-   MODALE 2 : AJOUT DE PHOTO
-****************************************************/
+ * MODALE 2 : AJOUT DE PHOTO
+ ****************************************************/
 const addPhotoModal = document.getElementById("add-photo-modal");
 const backToGalleryBtn = document.getElementById("back-to-gallery");
 const closeAddPhotoModal = document.getElementById("close-add-photo-modal");
@@ -273,11 +273,11 @@ const uploadLabel = document.getElementById("upload-label");
 const photoTitle = document.getElementById("photo-title");
 const photoCategory = document.getElementById("photo-category");
 const validatePhotoButton = document.getElementById("validate-photo");
+const modal = document.getElementById("modal");
 
 // Retour à la 1re modale
 backToGalleryBtn.addEventListener("click", () => {
   addPhotoModal.classList.add("hidden");
-  const modal = document.getElementById("modal");
   modal.classList.remove("hidden");
 });
 
@@ -285,12 +285,14 @@ backToGalleryBtn.addEventListener("click", () => {
 closeAddPhotoModal.addEventListener("click", () => {
   addPhotoModal.classList.add("hidden");
   resetAddPhotoForm();
+  modal.classList.remove("hidden");
 });
 
 window.addEventListener("click", (e) => {
   if (e.target === addPhotoModal) {
     addPhotoModal.classList.add("hidden");
     resetAddPhotoForm();
+    modal.classList.remove("hidden");
   }
 });
 
@@ -313,7 +315,6 @@ uploadInput.addEventListener("change", (event) => {
   }
 });
 
-// Charger les catégories pour la 2e modale
 async function loadCategories() {
   try {
     const response = await fetch("http://localhost:5678/api/categories");
@@ -322,19 +323,20 @@ async function loadCategories() {
     }
     const categories = await response.json();
     photoCategory.innerHTML = "";
-    
+
     categories.forEach((cat) => {
       const option = document.createElement("option");
       option.value = cat.id;
       option.textContent = cat.name;
       photoCategory.appendChild(option);
     });
+	editCategorySelect.innerHTML = photoCategory.innerHTML;
+
   } catch (error) {
     console.error("Erreur lors du chargement des catégories:", error);
   }
 }
 
-// Activer/désactiver bouton "Valider" ajout
 function updateValidateButton() {
   if (photoTitle.value.trim() !== "" && previewImage.src !== "" && photoCategory.value !== "") {
     validatePhotoButton.removeAttribute("disabled");
@@ -345,7 +347,6 @@ function updateValidateButton() {
 photoTitle.addEventListener("input", updateValidateButton);
 photoCategory.addEventListener("change", updateValidateButton);
 
-// Envoyer les données
 validatePhotoButton.addEventListener("click", async () => {
   const file = uploadInput.files[0];
   if (!file) return;
@@ -368,8 +369,9 @@ validatePhotoButton.addEventListener("click", async () => {
 
     alert("Photo ajoutée !");
     addPhotoModal.classList.add("hidden");
+    modal.classList.remove("hidden"); //Afficher la fenetre modale n°1
     resetAddPhotoForm();
-    location.reload(); 
+    location.reload();
   } catch (error) {
     console.error("Erreur :", error);
     alert("Une erreur est survenue.");
@@ -386,99 +388,155 @@ function resetAddPhotoForm() {
   validatePhotoButton.setAttribute("disabled", true);
 }
 
-// Charger les catégories au chargement pour la 2e modale
 document.addEventListener("DOMContentLoaded", () => {
   loadCategories();
 });
 
 /****************************************************
-   MODALE 3 : MODIFIER UN PROJET
-****************************************************/
-const editPhotoModal = document.getElementById("edit-photo-modal"); // Dans votre HTML, id="edit-photo-modal"
-const closeEditModalBtn = document.getElementById("close-edit-modal"); // La croix
-const editTitleInput = document.getElementById("edit-title"); // Le champ titre
-const editCategorySelect = document.getElementById("edit-category"); // La liste catégories
+ * MODALE 3 : MODIFIER UN PROJET
+ ****************************************************/
+const editPhotoModal = document.getElementById("edit-photo-modal");
+const closeEditModalBtn = document.getElementById("close-edit-photo-modal");
+const backToGalleryEditBtn = document.getElementById("back-to-gallery-edit");
+const editUploadInput = document.getElementById("upload-input-edit");
+const editUploadLabel = document.getElementById("upload-label-edit");
 const editPreviewImage = document.getElementById("edit-preview-image");
-const editValidateBtn = document.getElementById("edit-validate-btn");
+const editTitleInput = document.getElementById("edit-photo-title");
+const editCategorySelect = document.getElementById("edit-photo-category");
+const editValidateBtn = document.getElementById("validate-photo-edit");
+
 
 // Fonction pour ouvrir la 3e modale, préremplir les champs
 function openEditModal(work) {
-  window.currentEditWorkId = work.id;
-  
-  editTitleInput.value = work.title;
-  
-  editCategorySelect.value = work.category?.id || "";
-  
-  editPreviewImage.src = work.imageUrl;
-  editPreviewImage.classList.remove("hidden");
-  
-  editPhotoModal.classList.remove("hidden");
-  
-  updateEditValidateButton();
+    window.currentEditWorkId = work.id;
+
+    editTitleInput.value = work.title;
+    editCategorySelect.value = work.category?.id || "";
+	if (work.imageUrl) {
+		editPreviewImage.src = work.imageUrl;
+		editPreviewImage.classList.remove("hidden");
+		editUploadLabel.style.display = "none";
+	} else {
+		editPreviewImage.classList.add("hidden");
+		editUploadLabel.style.display = "flex";
+	}
+
+    editPhotoModal.classList.remove("hidden");
+	modal.classList.add("hidden");
+
+    updateEditValidateButton();
 }
 
-// Fermer la 3e modale
+
 closeEditModalBtn.addEventListener("click", () => {
-  editPhotoModal.classList.add("hidden");
+    editPhotoModal.classList.add("hidden");
+	modal.classList.remove("hidden");
+    resetEditPhotoForm();
 });
 
-window.addEventListener("click", (e) => {
-  if (e.target === editPhotoModal) {
+backToGalleryEditBtn.addEventListener("click", () => {
     editPhotoModal.classList.add("hidden");
-  }
+	modal.classList.remove("hidden");
+    resetEditPhotoForm();
+});
+
+
+window.addEventListener("click", (e) => {
+    if (e.target === editPhotoModal) {
+        editPhotoModal.classList.add("hidden");
+		modal.classList.remove("hidden");
+        resetEditPhotoForm();
+    }
 });
 
 function updateEditValidateButton() {
-  if (editTitleInput.value.trim() !== "" && editCategorySelect.value !== "") {
-    editValidateBtn.removeAttribute("disabled");
-  } else {
-    editValidateBtn.setAttribute("disabled", true);
-  }
+    if (editTitleInput.value.trim() !== "" && editCategorySelect.value !== "") {
+        editValidateBtn.removeAttribute("disabled");
+    } else {
+        editValidateBtn.setAttribute("disabled", true);
+    }
 }
+
 editTitleInput.addEventListener("input", updateEditValidateButton);
 editCategorySelect.addEventListener("change", updateEditValidateButton);
 
-// Enregistrer la modif (3e modale)
+editUploadInput.addEventListener("change", (event) => {
+    const file = event.target.files[0];
+    if (file && (file.type === "image/jpeg" || file.type === "image/png") && file.size <= 4 * 1024 * 1024) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        editPreviewImage.src = reader.result;
+        editPreviewImage.classList.remove("hidden");
+        editUploadLabel.style.display = "none";
+        updateEditValidateButton(); 
+      };
+      reader.readAsDataURL(file);
+    } else {
+      alert("Format ou taille invalide ! (jpg/png, max 4 Mo)");
+      editUploadInput.value = "";
+      editPreviewImage.classList.add("hidden");
+      editUploadLabel.style.display = "flex";
+      updateEditValidateButton(); 
+    }
+  });
+
+
 editValidateBtn.addEventListener("click", async () => {
-  const token = localStorage.getItem("token");
-  if (!token) {
-    alert("Vous n’êtes pas connecté.");
-    return;
-  }
-  
-  const currentWorkId = window.currentEditWorkId;
-  if (!currentWorkId) {
-    alert("Aucun projet à modifier");
-    return;
-  }
-  
-  const newTitle = editTitleInput.value.trim();
-  const newCatId = editCategorySelect.value;
-  
-  // Appel PUT/PATCH
-  try {
-    const response = await fetch(`${WORKS_URL}/${currentWorkId}`, {
-      method: "PUT", 
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`
-      },
-      body: JSON.stringify({
-        title: newTitle,
-        category: newCatId
-      })
-    });
-    
-    if (!response.ok) throw new Error("Erreur lors de la mise à jour");
-    
-    alert("Modifications enregistrées !");
-    editPhotoModal.classList.add("hidden");
-    
-    // Recharger la galerie
-    location.reload();
-  } catch (error) {
-    console.error(error);
-    alert("Impossible de modifier ce projet.");
-  }
+    const token = localStorage.getItem("token");
+    if (!token) {
+        alert("Vous n’êtes pas connecté.");
+        return;
+    }
+
+    const currentWorkId = window.currentEditWorkId;
+    if (!currentWorkId) {
+        alert("Aucun projet à modifier");
+        return;
+    }
+
+    const newTitle = editTitleInput.value.trim();
+    const newCatId = editCategorySelect.value;
+
+    let formData = new FormData();
+    formData.append("title", newTitle);
+    formData.append("category", newCatId);
+    if (editUploadInput.files.length > 0) {
+        formData.append("image", editUploadInput.files[0]);
+    } else {
+    }
+
+
+    try {
+        const response = await fetch(`${WORKS_URL}/${currentWorkId}`, {
+            method: "PUT",
+            headers: {
+                Authorization: `Bearer ${token}`
+            },
+            body: formData
+        });
+
+        if (!response.ok) throw new Error("Erreur lors de la mise à jour");
+
+        alert("Modifications enregistrées !");
+        editPhotoModal.classList.add("hidden");
+		modal.classList.remove("hidden");
+        location.reload();
+    } catch (error) {
+        console.error(error);
+        alert("Impossible de modifier ce projet.");
+    }
 });
 
+function resetEditPhotoForm() {
+    editUploadInput.value = "";
+    editPreviewImage.src = "";
+    editPreviewImage.classList.add("hidden");
+    editUploadLabel.style.display = "flex";
+    editTitleInput.value = "";
+    editCategorySelect.value = "";
+    editValidateBtn.setAttribute("disabled", true);
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    loadCategories(); 
+});

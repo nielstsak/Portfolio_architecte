@@ -153,10 +153,7 @@
   
 		<label for="photo-category">Catégorie</label>
 		<select id="photo-category">
-
     </select>
-
-		<p class="info-message">Les catégories doivent provenir de l'API.</p>
 	  </div>
 	  <div class="modal-separator"></div>
 
@@ -164,23 +161,37 @@
 	</div>
   </div>
 
-  <!-- MODALE 3 : MODIFIER UN PROJET -->
+<!-- MODALE 3 : MODIFIER UN PROJET -->
   <div id="edit-photo-modal" class="modal hidden">
-    <div class="modal-content">
-      <span id="close-edit-modal" class="close-modal">&times;</span>
-      <h2>Modifier un projet</h2>
-      <label for="edit-title">Titre</label>
-      <input type="text" id="edit-title" placeholder="Titre du projet">
-      
-      <label for="edit-category">Catégorie</label>
-      <select id="edit-category"></select>
-      
-      <img id="edit-preview-image" class="hidden" alt="Aperçu du projet">
-      
-      <button id="edit-validate-btn" disabled>Valider</button>
+    <div class="modal-content add-photo-modal-content"> <!-- Utiliser la même classe pour le style -->
+      <button id="back-to-gallery-edit" class="back-arrow"> <!-- ID unique -->
+        <img src="./assets/icons/arrow-left-svgrepo-com.svg" alt="Retour">
+      </button>
+      <span id="close-edit-photo-modal" class="close-modal">×</span> <!-- ID unique -->
+      <h2>Modification photo</h2> <!-- Titre plus approprié -->
+
+      <div class="upload-box" id="upload-area-edit"> <!-- ID unique -->
+        <label for="upload-input-edit" class="upload-label" id="upload-label-edit"> <!-- IDs uniques -->
+          <img src="./assets/icons/image-plus-svgrepo-com.svg" alt="Icône upload" class="icon-upload">
+          <p>Modifier l'image</p> <!-- Texte adapté -->
+          <span>jpg, png : 4mo max</span>
+        </label>
+        <input type="file" id="upload-input-edit" accept="image/png, image/jpeg" hidden> <!-- ID unique -->
+        <img id="edit-preview-image" class="hidden" alt="Aperçu de l’image"> <!-- ID unique, classe hidden enlevée, style ajouté -->
+      </div>
+
+      <div class="fields">
+        <label for="edit-photo-title">Titre</label>
+        <input type="text" id="edit-photo-title" placeholder="Nom du projet"> <!-- ID unique -->
+
+        <label for="edit-photo-category">Catégorie</label>
+        <select id="edit-photo-category"></select> <!-- ID unique -->
+      </div>
+
+      <div class="modal-separator"></div>
+      <button id="validate-photo-edit" disabled>Valider les modifications</button> <!-- ID unique et texte adapté -->
     </div>
   </div>
-
   
 
   <script src="./script.js"></script>
